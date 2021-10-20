@@ -10,8 +10,8 @@ target_sources(tests PRIVATE main.cpp example.cpp)
 target_link_libraries(
     tests
     PRIVATE
-        my-hovercraft-is-full-of-eels-compiler-options  # tests use same compiler options as main project
-        my-hovercraft-is-full-of-eels
+        gryde-compiler-options  # tests use same compiler options as main project
+        gryde
         Catch2::Catch2  # unit testing framework
 )
 
