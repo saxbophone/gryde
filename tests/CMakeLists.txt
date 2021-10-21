@@ -10,8 +10,9 @@ target_sources(
     tests
     PRIVATE
         main.cpp
+        cell_accessor.cpp
         constructors.cpp
-        contents.cpp
+        contents_accessor.cpp
 )
 target_link_libraries(
     tests
