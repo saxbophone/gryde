@@ -11,7 +11,6 @@ target_sources(
     PRIVATE
         main.cpp
         constructors.cpp
-        example.cpp
 )
 target_link_libraries(
     tests
