@@ -13,6 +13,7 @@ target_sources(
         cell_accessor.cpp
         constructors.cpp
         contents_accessor.cpp
+        submatrix.cpp
 )
 target_link_libraries(
     tests
