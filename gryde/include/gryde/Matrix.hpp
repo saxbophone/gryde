@@ -23,6 +23,8 @@ public:
       , _n(N)
       , _contents{}
       {
+        // XXX: much of this function is identical to its dynamic counterpart
+        // TODO: Refactor out common code somehow
         // validate list dimensions
         if (l.size() != _m) {
             throw std::runtime_error("Top-level initializer_list is wrong size");
@@ -132,6 +134,8 @@ public:
     }
     // returns a new fixed-Matrix with the specified row and column removed
     constexpr Matrix<T, M - 1, N - 1> submatrix(std::size_t row, std::size_t col) const {
+        // XXX: much of this function is identical to its dynamic counterpart
+        // TODO: Refactor out common code somehow
         // prevent wrap-around on underflow making huge matrices
         static_assert(M > 0 and N > 0, "No more rows or columns to remove");
         // validate row and column indices
@@ -203,6 +207,8 @@ public:
       , _n(n)
       , _contents(m * n)
       {
+        // XXX: much of this function is identical to its fixed counterpart
+        // TODO: Refactor out common code somehow
         // validate list dimensions
         if (l.size() != _m) {
             throw std::runtime_error("Top-level initializer_list is wrong size");
@@ -312,6 +318,8 @@ public:
     }
     // returns a new dynamic-Matrix with the specified row and column removed
     Matrix submatrix(std::size_t row, std::size_t col) const {
+        // XXX: much of this function is identical to its fixed counterpart
+        // TODO: Refactor out common code somehow
         // prevent wrap-around on underflow making huge matrices
         if (_m < 1 or _n < 1) {
             throw std::runtime_error("No more rows or columns to remove");
