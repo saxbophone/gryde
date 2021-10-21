@@ -21,102 +21,61 @@ SCENARIO("Get cell of zero-size dynamic Matrix") {
     }
 }
 
-// SCENARIO("Get cells of non-zero-size fixed Matrix") {
-//     GIVEN("A fixed Matrix of non-zero-size with some contents") {
-//         Matrix<int, 3, 2> matrix = {
-//             {1, 2,},
-//             {3, 4,},
-//             {6, 3,},
-//         };
-//         WHEN("A span is retrieved from Matrix.contents()") {
-//             auto mc = matrix.contents();
-//             THEN("That span's size is the same as the Matrix's") {
-//                 CHECK(mc.size() == 3 * 2);
-//             }
-//             AND_THEN("That span's contents are the same as the Matrix's") {
-//                 std::vector<int> expected = {
-//                     1, 2,
-//                     3, 4,
-//                     6, 3,
-//                 };
-//                 // collect Matrix contents into a vector
-//                 std::vector<int> contents(mc.begin(), mc.end());
-//                 CHECK(contents == expected);
-//             }
-//         }
-//     }
-// }
+SCENARIO("Get cell of non-zero-size fixed Matrix") {
+    GIVEN("A fixed Matrix of non-zero-size with some contents") {
+        Matrix<int, 3, 2> matrix = {
+            {1, 2,},
+            {3, 4,},
+            {6, 3,},
+        };
+        THEN("A single cell of the Matrix can be retrieved using the function-call operator") {
+            int cell = matrix(1, 1);
+            CHECK(cell == 4);
+        }
+    }
+}
 
-// SCENARIO("Get cells of non-zero-size dynamic Matrix") {
-//     GIVEN("A dynamic Matrix of non-zero-size with some contents") {
-//         Matrix<int> matrix(
-//             3, 2,
-//             {
-//                 {1, 2,},
-//                 {3, 4,},
-//                 {6, 3,},
-//             }
-//         );
-//         WHEN("A span is retrieved from Matrix.contents()") {
-//             auto mc = matrix.contents();
-//             THEN("That span's size is the same as the Matrix's") {
-//                 CHECK(mc.size() == 3 * 2);
-//             }
-//             AND_THEN("That span's contents are the same as the Matrix's") {
-//                 std::vector<int> expected = {
-//                     1, 2,
-//                     3, 4,
-//                     6, 3,
-//                 };
-//                 // collect Matrix contents into a vector
-//                 std::vector<int> contents(mc.begin(), mc.end());
-//                 CHECK(contents == expected);
-//             }
-//         }
-//     }
+SCENARIO("Get cell of non-zero-size dynamic Matrix") {
+    GIVEN("A dynamic Matrix of non-zero-size with some contents") {
+        Matrix<int> matrix(
+            3, 2,
+            {
+                {1, 2,},
+                {3, 4,},
+                {6, 3,},
+            }
+        );
+        THEN("A single cell of the Matrix can be retrieved using the function-call operator") {
+            int cell = matrix(1, 1);
+            CHECK(cell == 4);
+        }
+    }
+}
 
-// }
+SCENARIO("Set cell of non-zero-size fixed Matrix") {
+    GIVEN("A fixed Matrix of non-zero-size with default-initialised content") {
+        Matrix<int, 2, 3> matrix;
+        // verify content in cell we're going to change is default-initialised
+        REQUIRE(matrix(1, 2) == int{});
+        WHEN("A single cell is set to a value using the function-call operator") {
+            matrix(1, 2) = 467;
+            THEN("That cell now has that value") {
+                CHECK(matrix(1, 2) == 467);
+            }
+        }
+    }
+}
 
-// SCENARIO("Set cells of non-zero-size fixed Matrix") {
-//     GIVEN("A fixed Matrix of non-zero-size") {
-//         Matrix<int, 2, 3> matrix;
-//         WHEN("Some of its contents are set through Matrix.contents()") {
-//             auto mc = matrix.contents();
-//             mc[3] = 467;
-//             mc[5] = -123;
-//             THEN("The Matrix contents are changed accordingly") {
-//                 std::vector<int> expected = {
-//                     {}, {},
-//                     {}, 467,
-//                     {}, -123,
-//                 };
-//                 auto mc = matrix.contents();
-//                 // collect Matrix contents into a vector
-//                 std::vector<int> contents(mc.begin(), mc.end());
-//                 CHECK(contents == expected);
-//             }
-//         }
-//     }
-// }
-
-// SCENARIO("Set cells of non-zero-size dynamic Matrix") {
-//     GIVEN("A dynamic Matrix of non-zero-size") {
-//         Matrix<int> matrix(2, 3);
-//         WHEN("Some of its contents are set through Matrix.contents()") {
-//             auto mc = matrix.contents();
-//             mc[3] = 467;
-//             mc[5] = -123;
-//             THEN("The Matrix contents are changed accordingly") {
-//                 std::vector<int> expected = {
-//                     {}, {},
-//                     {}, 467,
-//                     {}, -123,
-//                 };
-//                 auto mc = matrix.contents();
-//                 // collect Matrix contents into a vector
-//                 std::vector<int> contents(mc.begin(), mc.end());
-//                 CHECK(contents == expected);
-//             }
-//         }
-//     }
-// }
+SCENARIO("Set cells of non-zero-size dynamic Matrix") {
+    GIVEN("A dynamic Matrix of non-zero-size") {
+        Matrix<int> matrix(2, 3);
+        // verify content in cell we're going to change is default-initialised
+        REQUIRE(matrix(1, 2) == int{});
+        WHEN("A single cell is set to a value using the function-call operator") {
+            matrix(1, 2) = 467;
+            THEN("That cell now has that value") {
+                CHECK(matrix(1, 2) == 467);
+            }
+        }
+    }
+}
