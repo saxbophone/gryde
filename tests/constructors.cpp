@@ -5,7 +5,7 @@
 
 SCENARIO("Default-construction of Fixed-size Matrix") {
     WHEN("A Matrix of compile-time size is default-constructed") {
-        Matrix<int, 3, 4> matrix;
+        constexpr Matrix<int, 3, 4> matrix;
         THEN("The Matrix dimensions are equal to its compile-time size") {
             CHECK(matrix.row_count() == 3);
             CHECK(matrix.col_count() == 4);
@@ -35,7 +35,7 @@ SCENARIO("Default-construction of Dynamic-size Matrix") {
 
 SCENARIO("Initializer-list construction of Fixed-size Matrx") {
     WHEN("A Matrix of compile-time size is constructed from an Initializer-list") {
-        Matrix<int, 3, 4> matrix = {
+        constexpr Matrix<int, 3, 4> matrix = {
             {1, 2, 3, 4,},
             {-6, -7, 1, 0,},
             {2, 3, 2, 2,},
