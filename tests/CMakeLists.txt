@@ -6,7 +6,13 @@ CPMFindPackage(
 )
 
 add_executable(tests)
-target_sources(tests PRIVATE main.cpp example.cpp)
+target_sources(
+    tests
+    PRIVATE
+        main.cpp
+        constructors.cpp
+        example.cpp
+)
 target_link_libraries(
     tests
     PRIVATE
