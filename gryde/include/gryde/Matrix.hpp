@@ -44,8 +44,12 @@ public:
             row_n++;
         }
     }
-    // this ctor sets elements from fixed-size span
-    constexpr Matrix(std::span<const T, M * N> s) : _m(M), _n(N) , _contents{} {
+    // this ctor sets elements from dynamic-size span
+    constexpr Matrix(std::span<const T> s) : _m(M), _n(N) , _contents{} {
+        // validate span size
+        if (s.size() != M * N) {
+            throw std::runtime_error("Span is wrong size");
+        }
         for (std::size_t i = 0; i < M * N; i++) {
             _contents[i] = s[i];
         }
