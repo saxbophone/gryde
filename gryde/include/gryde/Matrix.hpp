@@ -73,12 +73,12 @@ public:
     constexpr std::size_t row_count() const { return _m; }
     constexpr std::size_t col_count() const { return _n; }
     // read-only accessor for matrix contents
-    constexpr std::span<const T, M * N> contents() const {
-        return std::span<const T, M * N>(_contents);
+    constexpr std::span<const T> contents() const {
+        return std::span<const T>(_contents);
     }
     // read-write accessor for matrix contents
-    constexpr std::span<T, M * N> contents() {
-        return std::span<T, M * N>(_contents);
+    constexpr std::span<T> contents() {
+        return std::span<T>(_contents);
     }
     // read-only accessor for a specific cell of the Matrix
     constexpr const T& operator()(std::size_t m, std::size_t n) const {
