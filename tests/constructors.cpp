@@ -52,6 +52,16 @@ SCENARIO("Initializer-list construction of Fixed-size Matrx") {
             CHECK(contents == expected);
         }
     }
+    WHEN("A Matrix of compile-time size is constructed from an Initializer-list of incorrect size") {
+        THEN("An exception is raised") {
+            CHECK_THROWS(Matrix<int, 9, 7>({{}}));
+        }
+    }
+    WHEN("A Matrix of compile-time size is constructed from an Initializer-list with an oversized row") {
+        THEN("An exception is raised") {
+            CHECK_THROWS(Matrix<int, 3, 3>({{1, 2, 3, 4,}, {}, {},}));
+        }
+    }
 }
 
 SCENARIO("Construction of Dynamic-size Matrix with dimensions") {
@@ -97,6 +107,16 @@ SCENARIO("Initializer-list construction of Dynamic-size Matrx") {
             CHECK(contents == expected);
         }
     }
+    WHEN("A Matrix of run-time size is constructed from an Initializer-list of incorrect size") {
+        THEN("An exception is raised") {
+            CHECK_THROWS(Matrix<int>(9, 7, {{}}));
+        }
+    }
+    WHEN("A Matrix of run-time size is constructed from an Initializer-list with an oversized row") {
+        THEN("An exception is raised") {
+            CHECK_THROWS(Matrix<int>(3, 3, {{1, 2, 3, 4,}, {}, {},}));
+        }
+    }
 }
 
 SCENARIO("Span construction of Fixed-size Matrx") {
@@ -109,6 +129,11 @@ SCENARIO("Span construction of Fixed-size Matrx") {
             auto mc = matrix.contents();
             std::vector<int> contents(mc.begin(), mc.end());
             CHECK(contents == source);
+        }
+    }
+    WHEN("A Matrix of compile-time size is constructed from a span of incorrect size") {
+        THEN("An exception is raised") {
+            CHECK_THROWS(Matrix<int, 3, 3>(std::span<int>()));
         }
     }
 }
@@ -129,6 +154,11 @@ SCENARIO("Span construction of Dynamic-size Matrx") {
             CHECK(contents == source);
         }
     }
+    WHEN("A Matrix of run-time size is constructed from a span of incorrect size") {
+        THEN("An exception is raised") {
+            CHECK_THROWS(Matrix<int>(3, 3, std::span<int>()));
+        }
+    }
 }
 
 SCENARIO("Construct fixed-size Matrix from dynamic-size Matrix") {
@@ -143,6 +173,11 @@ SCENARIO("Construct fixed-size Matrix from dynamic-size Matrix") {
                 std::vector<int> dynamic_contents(dc.begin(), dc.end());
                 std::vector<int> fixed_contents(fc.begin(), fc.end());
                 CHECK(fixed_contents == dynamic_contents);
+            }
+        }
+        WHEN("A Matrix of fixed size and different dimensions is constructed from the dynamic one") {
+            THEN("An exception is raised") {
+                CHECK_THROWS(Matrix<int, 1, 1>(dynamic));
             }
         }
     }
