@@ -72,6 +72,12 @@ public:
     // getters for dimensions
     constexpr std::size_t row_count() const { return _m; }
     constexpr std::size_t col_count() const { return _n; }
+    // defaulted equality operator
+    constexpr bool operator==(const Matrix&) const = default;
+    // compare with dynamic-sized Matrix
+    bool operator==(const Matrix<T>& other) const {
+        return (Matrix<T>)*this == other;
+    }
     // read-only accessor for matrix contents
     constexpr std::span<const T> contents() const {
         return std::span<const T>(_contents);
@@ -259,6 +265,8 @@ public:
     // getters for dimensions
     std::size_t row_count() const { return _m; }
     std::size_t col_count() const { return _n; }
+    // defaulted equality operator
+    bool operator==(const Matrix&) const = default;
     // read-only accessor for a specific cell of the Matrix
     const T& operator()(std::size_t m, std::size_t n) const {
         // validate indices
