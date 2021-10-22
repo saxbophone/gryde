@@ -8,12 +8,76 @@
 
 #include <cstddef>
 
+// anonymous namespace for private implementation details
+namespace {
+    // abstract base class defining the interface of a class implementing
+    // Matrix functionality
+    template <typename T>
+    class MatrixBase {
+    public:
+        // getters for dimensions
+        virtual constexpr std::size_t row_count() const = 0;
+        virtual constexpr std::size_t col_count() const = 0;
+        // read-only accessor for matrix contents
+        virtual constexpr std::span<const T> contents() const = 0;
+        // read-write accessor for matrix contents
+        virtual constexpr std::span<T> contents() = 0;
+        // read-only accessor for a specific cell of the Matrix
+        virtual constexpr const T& operator()(std::size_t, std::size_t) const = 0;
+        // read-write accessor for a specific cell of the Matrix
+        virtual constexpr T& operator()(std::size_t, std::size_t) = 0;
+    protected:
+        // helper to unpack initializer_lists in ctors
+        constexpr void _unpack_initializer_list(
+            std::initializer_list<std::initializer_list<T>> l
+        ) {
+            // set contents of each row one by one (we allow shortened rows)
+            std::size_t row_n = 0;
+            for (auto row : l) {
+                // just check row doesn't exceed max size
+                if (row.size() > this->col_count()) {
+                    throw std::runtime_error("Oversized row found in initializer_list");
+                }
+                std::size_t col_n = 0;
+                for (auto col : row) {
+                    this->operator()(row_n, col_n) = col;
+                    col_n++;
+                }
+                row_n++;
+            }
+        }
+        // helper for making submatrices
+        constexpr void _populate_submatrix(
+            MatrixBase& submatrix,
+            std::size_t row,
+            std::size_t col
+        ) const {
+            // cursor indices for output to new matrix
+            std::size_t p = 0;
+            std::size_t q = 0;
+            for (std::size_t m = 0; m < this->row_count(); m++) {
+                for (std::size_t n = 0; n < this->col_count(); n++) {
+                    // skip cells from removed row/column
+                    if (m == row or n == col) { continue; }
+                    submatrix(p, q) = this->operator()(m, n);
+                    // advance the cursors
+                    q++;
+                    if (q == submatrix.col_count()) {
+                        q = 0;
+                        p++;
+                    }
+                }
+            }
+        }
+    };
+}
+
 template <
     typename T,
     std::size_t M = std::numeric_limits<size_t>::max(),
     std::size_t N = std::numeric_limits<size_t>::max()
 >
-class Matrix {
+class Matrix : public MatrixBase<T> {
 public:
     // default ctor, default-initialised all elements
     constexpr Matrix() : _m(M), _n(N) , _contents{} {}
@@ -23,26 +87,12 @@ public:
       , _n(N)
       , _contents{}
       {
-        // XXX: much of this function is identical to its dynamic counterpart
-        // TODO: Refactor out common code somehow
         // validate list dimensions
         if (l.size() != _m) {
             throw std::runtime_error("Top-level initializer_list is wrong size");
         }
         // set contents of each row one by one (we allow shortened rows)
-        std::size_t row_n = 0;
-        for (auto row : l) {
-            // just check row doesn't exceed max size
-            if (row.size() > _n) {
-                throw std::runtime_error("Oversized row found in initializer_list");
-            }
-            std::size_t col_n = 0;
-            for (auto col : row) {
-                this->operator()(row_n, col_n) = col;
-                col_n++;
-            }
-            row_n++;
-        }
+        this->_unpack_initializer_list(l);
     }
     // this ctor sets elements from dynamic-size span
     constexpr Matrix(std::span<const T> s) : _m(M), _n(N) , _contents{} {
@@ -144,8 +194,6 @@ public:
     }
     // returns a new fixed-Matrix with the specified row and column removed
     constexpr Matrix<T, M - 1, N - 1> submatrix(std::size_t row, std::size_t col) const {
-        // XXX: much of this function is identical to its dynamic counterpart
-        // TODO: Refactor out common code somehow
         // prevent wrap-around on underflow making huge matrices
         static_assert(M > 0 and N > 0, "No more rows or columns to remove");
         // validate row and column indices
@@ -155,22 +203,7 @@ public:
         // make a smaller matrix
         Matrix<T, M - 1, N - 1> sub;
         // populate it from all cells except those from the removed row and column
-        // cursor indices for output to new matrix
-        std::size_t p = 0;
-        std::size_t q = 0;
-        for (std::size_t m = 0; m < _m; m++) {
-            for (std::size_t n = 0; n < _n; n++) {
-                // skip cells from removed row/column
-                if (m == row or n == col) { continue; }
-                sub(p, q) = this->operator()(m, n);
-                // advance the cursors
-                q++;
-                if (q == sub.col_count()) {
-                    q = 0;
-                    p++;
-                }
-            }
-        }
+        this->_populate_submatrix(sub, row, col);
         return sub;
     }
     // returns a new fixed-Matrix with the specified row removed
@@ -201,7 +234,7 @@ class Matrix<
     T,
     std::numeric_limits<size_t>::max(),
     std::numeric_limits<size_t>::max()
-> {
+> : public MatrixBase<T> {
 public:
     // default ctor, creates dynamic Matrix of zero size (empty matrix)
     Matrix() : _m(0), _n(0) , _contents() {}
@@ -217,26 +250,12 @@ public:
       , _n(n)
       , _contents(m * n)
       {
-        // XXX: much of this function is identical to its fixed counterpart
-        // TODO: Refactor out common code somehow
         // validate list dimensions
         if (l.size() != _m) {
             throw std::runtime_error("Top-level initializer_list is wrong size");
         }
         // set contents of each row one by one (we allow shortened rows)
-        std::size_t row_n = 0;
-        for (auto row : l) {
-            // just check row doesn't exceed max size
-            if (row.size() > _n) {
-                throw std::runtime_error("Oversized row found in initializer_list");
-            }
-            std::size_t col_n = 0;
-            for (auto col : row) {
-                this->operator()(row_n, col_n) = col;
-                col_n++;
-            }
-            row_n++;
-        }
+        this->_unpack_initializer_list(l);
     }
     // this ctor sets Matrix size and elements from dynamic-size span
     Matrix(std::size_t m, std::size_t n, std::span<const T> s)
@@ -337,8 +356,6 @@ public:
     }
     // returns a new dynamic-Matrix with the specified row and column removed
     Matrix submatrix(std::size_t row, std::size_t col) const {
-        // XXX: much of this function is identical to its fixed counterpart
-        // TODO: Refactor out common code somehow
         // prevent wrap-around on underflow making huge matrices
         if (_m < 1 or _n < 1) {
             throw std::runtime_error("No more rows or columns to remove");
@@ -351,22 +368,7 @@ public:
         // make a smaller matrix
         Matrix sub(_m - 1, _n - 1);
         // populate it from all cells except those from the removed row and column
-        // cursor indices for output to new matrix
-        std::size_t p = 0;
-        std::size_t q = 0;
-        for (std::size_t m = 0; m < _m; m++) {
-            for (std::size_t n = 0; n < _n; n++) {
-                // skip cells from removed row/column
-                if (m == row or n == col) { continue; }
-                sub(p, q) = this->operator()(m, n);
-                // advance the cursors
-                q++;
-                if (q == sub.col_count()) {
-                    q = 0;
-                    p++;
-                }
-            }
-        }
+        this->_populate_submatrix(sub, row, col);
         return sub;
     }
     // returns a new dynamic-Matrix with the specified row removed
