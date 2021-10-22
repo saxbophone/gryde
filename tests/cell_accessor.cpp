@@ -32,6 +32,11 @@ SCENARIO("Get cell of non-zero-size fixed Matrix") {
             int cell = matrix(1, 1);
             CHECK(cell == 4);
         }
+        THEN("Using the function-call operator with out-of-bounds indices throws an exception") {
+            CHECK_THROWS(matrix(2, 4)); // 4 out of bounds
+            CHECK_THROWS(matrix(9, 1)); // 9 out of bounds
+            CHECK_THROWS(matrix(2000, 1000)); // both out of bounds
+        }
     }
 }
 
@@ -49,6 +54,29 @@ SCENARIO("Get cell of non-zero-size dynamic Matrix") {
             int cell = matrix(1, 1);
             CHECK(cell == 4);
         }
+        THEN("Using the function-call operator with out-of-bounds indices throws an exception") {
+            CHECK_THROWS(matrix(2, 4)); // 4 out of bounds
+            CHECK_THROWS(matrix(9, 1)); // 9 out of bounds
+            CHECK_THROWS(matrix(2000, 1000)); // both out of bounds
+        }
+    }
+}
+
+SCENARIO("Set cell of zero-size fixed Matrix") {
+    GIVEN("A fixed Matrix of zero-size") {
+        Matrix<int, 0, 0> matrix;
+        THEN("Using function-call operator to set any cell throws an exception") {
+            CHECK_THROWS(matrix(0, 0) = 9);
+        }
+    }
+}
+
+SCENARIO("Set cell of zero-size dynamic Matrix") {
+    GIVEN("A dynamic Matrix of zero-size") {
+        Matrix<int> matrix(0, 0);
+        THEN("Using function-call operator to set any cell throws an exception") {
+            CHECK_THROWS(matrix(0, 0) = 9);
+        }
     }
 }
 
@@ -63,6 +91,11 @@ SCENARIO("Set cell of non-zero-size fixed Matrix") {
                 CHECK(matrix(1, 2) == 467);
             }
         }
+        THEN("Trying to set an out of bounds cell throws an exception") {
+            CHECK_THROWS(matrix(2, 4) = 23); // 4 out of bounds
+            CHECK_THROWS(matrix(9, 1) = 19); // 9 out of bounds
+            CHECK_THROWS(matrix(2000, 1000) = 7); // both out of bounds
+        }
     }
 }
 
@@ -76,6 +109,11 @@ SCENARIO("Set cells of non-zero-size dynamic Matrix") {
             THEN("That cell now has that value") {
                 CHECK(matrix(1, 2) == 467);
             }
+        }
+        THEN("Trying to set an out of bounds cell throws an exception") {
+            CHECK_THROWS(matrix(2, 4) = 23); // 4 out of bounds
+            CHECK_THROWS(matrix(9, 1) = 19); // 9 out of bounds
+            CHECK_THROWS(matrix(2000, 1000) = 7); // both out of bounds
         }
     }
 }
