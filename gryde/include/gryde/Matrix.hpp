@@ -265,8 +265,15 @@ public:
     // getters for dimensions
     std::size_t row_count() const { return _m; }
     std::size_t col_count() const { return _n; }
-    // defaulted equality operator
-    bool operator==(const Matrix&) const = default;
+    // equality operator
+    bool operator==(const Matrix& other) const {
+        // validate dimensions before doing the actual comparison
+        if (this->_m != other._m or this->_n != other._n) {
+            throw std::runtime_error("Matrix dimensions don't match");
+        }
+        // otherwise, just compare contents
+        return this->_contents == other._contents;
+    }
     // read-only accessor for a specific cell of the Matrix
     const T& operator()(std::size_t m, std::size_t n) const {
         // validate indices

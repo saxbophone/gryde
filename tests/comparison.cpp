@@ -105,8 +105,8 @@ SCENARIO("Comparing same-sized Matrices for equality") {
             Matrix<int> b(
                 3, 2,
                 {
-                    {9, 1,},
-                    {7, 3,},
+                    {1, 2,},
+                    {3, 4,},
                     {5, 6,},
                 }
             );
