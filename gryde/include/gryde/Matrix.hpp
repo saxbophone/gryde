@@ -122,8 +122,10 @@ public:
     // getters for dimensions
     constexpr std::size_t row_count() const { return _m; }
     constexpr std::size_t col_count() const { return _n; }
-    // defaulted equality operator
-    constexpr bool operator==(const Matrix&) const = default;
+    // equality operator
+    constexpr bool operator==(const Matrix& other) const {
+        return this->_contents == other._contents;
+    }
     // compare with dynamic-sized Matrix
     bool operator==(const Matrix<T>& other) const {
         return (Matrix<T>)*this == other;
