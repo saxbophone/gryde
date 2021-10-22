@@ -11,6 +11,7 @@ target_sources(
     PRIVATE
         main.cpp
         cell_accessor.cpp
+        comparison.cpp
         constructors.cpp
         contents_accessor.cpp
         submatrix.cpp
