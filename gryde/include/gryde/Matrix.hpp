@@ -85,22 +85,20 @@ template <
 class Matrix : public MatrixBase<T> {
 public:
     // default ctor, default-initialised all elements
-    constexpr Matrix() : _m(M), _n(N) , _contents{} {}
+    constexpr Matrix() : _contents{} {}
     // this ctor sets elements from initialiser list
     constexpr Matrix(std::initializer_list<std::initializer_list<T>> l)
-      : _m(M)
-      , _n(N)
-      , _contents{}
+      : _contents{}
       {
         // validate list dimensions
-        if (l.size() != _m) {
+        if (l.size() != M) {
             throw std::runtime_error("Top-level initializer_list is wrong size");
         }
         // set contents of each row one by one (we allow shortened rows)
         MatrixBase<T>::_unpack_initializer_list(l, N, this->_contents);
     }
     // this ctor sets elements from dynamic-size span
-    constexpr Matrix(std::span<const T> s) : _m(M), _n(N) , _contents{} {
+    constexpr Matrix(std::span<const T> s) : _contents{} {
         // validate span size
         if (s.size() != M * N) {
             throw std::runtime_error("Span is wrong size");
@@ -114,7 +112,7 @@ public:
       : Matrix()
       {
         // check dimensions of other match our dimensions
-        if (other.row_count() != _m or other.col_count() != _n) {
+        if (other.row_count() != M or other.col_count() != N) {
             throw std::runtime_error("Matrix dimensions don't match");
         }
         // use compile-time-sized subspan to convert dynamic span to fixed span
@@ -125,8 +123,8 @@ public:
         }
     }
     // getters for dimensions
-    constexpr std::size_t row_count() const { return _m; }
-    constexpr std::size_t col_count() const { return _n; }
+    constexpr std::size_t row_count() const { return M; }
+    constexpr std::size_t col_count() const { return N; }
     // equality operator
     constexpr bool operator==(const Matrix& other) const {
         return this->_contents == other._contents;
@@ -146,18 +144,24 @@ public:
     // read-only accessor for a specific cell of the Matrix
     constexpr const T& operator()(std::size_t m, std::size_t n) const {
         // validate indices
-        if (m >= _m or n >= _n) {
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wtype-limits"
+        if (m >= M or n >= N) { // compiler complains for check when zero-size
+        #pragma GCC diagnostic pop
             throw std::runtime_error("Matrix[] indices out of bounds");
         }
-        return _contents[m * _n + n];
+        return _contents[m * N + n];
     }
     // read-write accessor for a specific cell of the Matrix
     constexpr T& operator()(std::size_t m, std::size_t n) {
         // validate indices
-        if (m >= _m or n >= _n) {
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wtype-limits"
+        if (m >= M or n >= N) { // compiler complains for check when zero-size
+        #pragma GCC diagnostic pop
             throw std::runtime_error("Matrix[] indices out of bounds");
         }
-        return _contents[m * _n + n];
+        return _contents[m * N + n];
     }
     // calculates determinant for square Matrices
     constexpr T determinant() const {
@@ -228,9 +232,6 @@ public:
         return {};
     }
 private:
-    // dimensions
-    std::size_t _m;
-    std::size_t _n;
     // contents
     std::array<T, M * N> _contents;
 };
