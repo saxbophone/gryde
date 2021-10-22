@@ -28,19 +28,24 @@ namespace {
         virtual constexpr T& operator()(std::size_t, std::size_t) = 0;
     protected:
         // helper to unpack initializer_lists in ctors
+        // XXX: because this method is called from a ctor, we have to avoid
+        // using any virtual methods in it, hence the need to pass col_count
+        // and contents explicitly
         constexpr void _unpack_initializer_list(
-            std::initializer_list<std::initializer_list<T>> l
+            std::initializer_list<std::initializer_list<T>> l,
+            std::size_t col_count,
+            std::span<T> contents
         ) {
             // set contents of each row one by one (we allow shortened rows)
             std::size_t row_n = 0;
             for (auto row : l) {
                 // just check row doesn't exceed max size
-                if (row.size() > this->col_count()) {
+                if (row.size() > col_count) {
                     throw std::runtime_error("Oversized row found in initializer_list");
                 }
                 std::size_t col_n = 0;
                 for (auto col : row) {
-                    this->operator()(row_n, col_n) = col;
+                    contents[row_n * col_count + col_n] = col;
                     col_n++;
                 }
                 row_n++;
@@ -92,7 +97,7 @@ public:
             throw std::runtime_error("Top-level initializer_list is wrong size");
         }
         // set contents of each row one by one (we allow shortened rows)
-        this->_unpack_initializer_list(l);
+        this->_unpack_initializer_list(l, N, this->_contents);
     }
     // this ctor sets elements from dynamic-size span
     constexpr Matrix(std::span<const T> s) : _m(M), _n(N) , _contents{} {
@@ -257,7 +262,7 @@ public:
             throw std::runtime_error("Top-level initializer_list is wrong size");
         }
         // set contents of each row one by one (we allow shortened rows)
-        this->_unpack_initializer_list(l);
+        this->_unpack_initializer_list(l, n, this->_contents);
     }
     // this ctor sets Matrix size and elements from dynamic-size span
     Matrix(std::size_t m, std::size_t n, std::span<const T> s)
