@@ -3,6 +3,15 @@
 #include <gryde/Matrix.hpp>
 
 
+SCENARIO("Make submatrix of zero-size dynamic-size Matrix") {
+    GIVEN("A dynamic-size Matrix of zero-size") {
+        Matrix<int> matrix(0, 0);
+        THEN("Matrix.submatrix() throws an exception") {
+            CHECK_THROWS(matrix.submatrix(0, 0));
+        }
+    }
+}
+
 SCENARIO("Make submatrix of fixed-size Matrix with default values") {
     GIVEN("A fixed-size Matrix with default-initialised contents") {
         Matrix<int, 10, 9> matrix;
@@ -14,6 +23,11 @@ SCENARIO("Make submatrix of fixed-size Matrix with default values") {
             auto smc = submatrix.contents();
             std::vector<int> contents(smc.begin(), smc.end());
             CHECK(contents == expected);
+        }
+        THEN("Matrix.submatrix() throws an exception when the row or col indices are out of bounds") {
+            CHECK_THROWS(matrix.submatrix(10, 8)); // row
+            CHECK_THROWS(matrix.submatrix(9, 9)); // col
+            CHECK_THROWS(matrix.submatrix(20, 20)); // both
         }
     }
 }
@@ -32,6 +46,11 @@ SCENARIO("Make submatrix of dynamic-size Matrix with default values") {
             auto smc = submatrix.contents();
             std::vector<int> contents(smc.begin(), smc.end());
             CHECK(contents == expected);
+        }
+        THEN("Matrix.submatrix() throws an exception when the row or col indices are out of bounds") {
+            CHECK_THROWS(matrix.submatrix(10, 8)); // row
+            CHECK_THROWS(matrix.submatrix(9, 9)); // col
+            CHECK_THROWS(matrix.submatrix(20, 20)); // both
         }
     }
 }
