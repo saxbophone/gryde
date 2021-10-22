@@ -31,7 +31,7 @@ namespace {
         // XXX: because this method is called from a ctor, we have to avoid
         // using any virtual methods in it, hence the need to pass col_count
         // and contents explicitly
-        constexpr void _unpack_initializer_list(
+        static constexpr void _unpack_initializer_list(
             std::initializer_list<std::initializer_list<T>> l,
             std::size_t col_count,
             std::span<T> contents
@@ -97,7 +97,7 @@ public:
             throw std::runtime_error("Top-level initializer_list is wrong size");
         }
         // set contents of each row one by one (we allow shortened rows)
-        this->_unpack_initializer_list(l, N, this->_contents);
+        MatrixBase<T>::_unpack_initializer_list(l, N, this->_contents);
     }
     // this ctor sets elements from dynamic-size span
     constexpr Matrix(std::span<const T> s) : _m(M), _n(N) , _contents{} {
@@ -262,7 +262,7 @@ public:
             throw std::runtime_error("Top-level initializer_list is wrong size");
         }
         // set contents of each row one by one (we allow shortened rows)
-        this->_unpack_initializer_list(l, n, this->_contents);
+        MatrixBase<T>::_unpack_initializer_list(l, n, this->_contents);
     }
     // this ctor sets Matrix size and elements from dynamic-size span
     Matrix(std::size_t m, std::size_t n, std::span<const T> s)
