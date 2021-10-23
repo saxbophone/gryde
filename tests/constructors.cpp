@@ -161,6 +161,55 @@ SCENARIO("Span construction of Dynamic-size Matrx") {
     }
 }
 
+SCENARIO("Copy-construction of fixed-size Matrix") {
+    GIVEN("A Matrix of fixed-size") {
+        Matrix<int, 3, 2> a = {
+            {1, 2,},
+            {4, -7,},
+            {6, 3,},
+        };
+        WHEN("Another Matrix of fixed-size is constructed from it") {
+            Matrix<int, 3, 2> b = a;
+            THEN("The contents of both matrices are identical") {
+                // collect contents of both for comparison
+                auto ac = a.contents();
+                auto bc = b.contents();
+                std::vector<int> a_contents(ac.begin(), ac.end());
+                std::vector<int> b_contents(bc.begin(), bc.end());
+                CHECK(a_contents == b_contents);
+            }
+        }
+    }
+}
+
+SCENARIO("Copy-construction of dynamic-size Matrix") {
+    GIVEN("A Matrix of dynamic-size") {
+        Matrix<int> a(
+            3, 2,
+            {
+                {1, 2,},
+                {4, -7,},
+                {6, 3,},
+            }
+        );
+        WHEN("Another Matrix of dynamic-size is constructed from it") {
+            Matrix<int> b = a;
+            THEN("The dimensions of both matrices are identical") {
+                CHECK(a.row_count() == b.row_count());
+                CHECK(a.col_count() == b.col_count());
+            }
+            AND_THEN("The contents of both matrices are identical") {
+                // collect contents of both for comparison
+                auto ac = a.contents();
+                auto bc = b.contents();
+                std::vector<int> a_contents(ac.begin(), ac.end());
+                std::vector<int> b_contents(bc.begin(), bc.end());
+                CHECK(a_contents == b_contents);
+            }
+        }
+    }
+}
+
 SCENARIO("Construct fixed-size Matrix from dynamic-size Matrix") {
     GIVEN("A Matrix of dynamic size, with non-zero dimensions and contents") {
         Matrix<int> dynamic(3, 2, {{1, 2,}, {3, 4,}, {1, 9,},});
