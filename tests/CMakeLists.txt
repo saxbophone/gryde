@@ -10,6 +10,7 @@ target_sources(
     tests
     PRIVATE
         main.cpp
+        addition.cpp
         cell_accessor.cpp
         comparison.cpp
         constructors.cpp
