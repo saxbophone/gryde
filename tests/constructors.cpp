@@ -256,3 +256,53 @@ SCENARIO("Construct dynamic-size Matrix from fixed-size Matrix") {
         }
     }
 }
+
+SCENARIO("Copy-assignment of fixed-size Matrix") {
+    GIVEN("A fixed-size Matrix") {
+        Matrix<int, 3, 2> matrix;
+        WHEN("The Matrix is assigned to with another fixed-size Matrix") {
+            std::vector<int> source = {1, 2, 3, 4, 5, 6,};
+            matrix = Matrix<int, 3, 2>(std::span<int>(source));
+            THEN("The Matrix's contents are the same as those of the Matrix assigned to it") {
+                // collect Matrix contents into a vector
+                auto mc = matrix.contents();
+                std::vector<int> contents(mc.begin(), mc.end());
+                CHECK(contents == source);
+            }
+        }
+    }
+}
+
+SCENARIO("Copy-assignment of dynamic-size Matrix") {
+    GIVEN("A dynamic-size Matrix") {
+        Matrix<int> matrix(3, 2);
+        WHEN("The Matrix is assigned to with another dynamic-size Matrix") {
+            std::vector<int> source = {1, 2, 3, 4, 5, 6,};
+            matrix = Matrix<int>(3, 2, std::span<int>(source));
+            THEN("The dimensions of the Matrix are correct") {
+                CHECK(matrix.row_count() == 3);
+                CHECK(matrix.col_count() == 2);
+            }
+            THEN("The Matrix's contents are the same as those of the Matrix assigned to it") {
+                // collect Matrix contents into a vector
+                auto mc = matrix.contents();
+                std::vector<int> contents(mc.begin(), mc.end());
+                CHECK(contents == source);
+            }
+        }
+        WHEN("The Matrix is assigned to with another dynamic-size Matrix of different dimensions") {
+            std::vector<int> source = {1, 2, 3, 4,};
+            matrix = Matrix<int>(2, 2, std::span<int>(source));
+            THEN("The dimensions of the Matrix are correct") {
+                CHECK(matrix.row_count() == 2);
+                CHECK(matrix.col_count() == 2);
+            }
+            THEN("The Matrix's contents are the same as those of the Matrix assigned to it") {
+                // collect Matrix contents into a vector
+                auto mc = matrix.contents();
+                std::vector<int> contents(mc.begin(), mc.end());
+                CHECK(contents == source);
+            }
+        }
+    }
+}
