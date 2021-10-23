@@ -143,25 +143,35 @@ public:
     }
     // read-only accessor for a specific cell of the Matrix
     constexpr const T& operator()(std::size_t m, std::size_t n) const override {
-        // validate indices
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wtype-limits"
-        if (m >= M or n >= N) { // compiler complains for check when zero-size
-        #pragma GCC diagnostic pop
-            throw std::runtime_error("Matrix[] indices out of bounds");
+        /*
+         * avoid -Wtype-limits warning diagnostic for always-false comparison
+         * when either of M or N are 0
+         */
+        if constexpr (M == 0 or N == 0) {
+            throw std::runtime_error("Matrix is empty");
+        } else {
+            // validate indices
+            if (m >= M or n >= N) { // compiler complains for check when zero-size
+                throw std::runtime_error("Matrix[] indices out of bounds");
+            }
+            return _contents[m * N + n];
         }
-        return _contents[m * N + n];
     }
     // read-write accessor for a specific cell of the Matrix
     constexpr T& operator()(std::size_t m, std::size_t n) override {
-        // validate indices
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wtype-limits"
-        if (m >= M or n >= N) { // compiler complains for check when zero-size
-        #pragma GCC diagnostic pop
-            throw std::runtime_error("Matrix[] indices out of bounds");
+        /*
+         * avoid -Wtype-limits warning diagnostic for always-false comparison
+         * when either of M or N are 0
+         */
+        if constexpr (M == 0 or N == 0) {
+            throw std::runtime_error("Matrix is empty");
+        } else {
+            // validate indices
+            if (m >= M or n >= N) { // compiler complains for check when zero-size
+                throw std::runtime_error("Matrix[] indices out of bounds");
+            }
+            return _contents[m * N + n];
         }
-        return _contents[m * N + n];
     }
     // calculates determinant for square Matrices
     constexpr T determinant() const {
