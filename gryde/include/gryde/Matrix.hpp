@@ -123,8 +123,8 @@ public:
         }
     }
     // getters for dimensions
-    constexpr std::size_t row_count() const { return M; }
-    constexpr std::size_t col_count() const { return N; }
+    constexpr std::size_t row_count() const override { return M; }
+    constexpr std::size_t col_count() const override { return N; }
     // equality operator
     constexpr bool operator==(const Matrix& other) const {
         return this->_contents == other._contents;
@@ -134,15 +134,15 @@ public:
         return (Matrix<T>)*this == other;
     }
     // read-only accessor for matrix contents
-    constexpr std::span<const T> contents() const {
+    constexpr std::span<const T> contents() const override {
         return std::span<const T>(_contents);
     }
     // read-write accessor for matrix contents
-    constexpr std::span<T> contents() {
+    constexpr std::span<T> contents() override {
         return std::span<T>(_contents);
     }
     // read-only accessor for a specific cell of the Matrix
-    constexpr const T& operator()(std::size_t m, std::size_t n) const {
+    constexpr const T& operator()(std::size_t m, std::size_t n) const override {
         // validate indices
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wtype-limits"
@@ -153,7 +153,7 @@ public:
         return _contents[m * N + n];
     }
     // read-write accessor for a specific cell of the Matrix
-    constexpr T& operator()(std::size_t m, std::size_t n) {
+    constexpr T& operator()(std::size_t m, std::size_t n) override {
         // validate indices
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wtype-limits"
