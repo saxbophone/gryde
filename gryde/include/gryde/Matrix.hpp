@@ -15,6 +15,8 @@ namespace {
     template <typename T>
     class MatrixBase {
     public:
+        // vritual destructor required due to C++ language rules
+        virtual constexpr ~MatrixBase() = default;
         // getters for dimensions
         virtual constexpr std::size_t row_count() const = 0;
         virtual constexpr std::size_t col_count() const = 0;
@@ -122,6 +124,8 @@ public:
             _contents[i] = cells[i];
         }
     }
+    // vritual destructor required due to C++ language rules
+    virtual constexpr ~Matrix() = default;
     // getters for dimensions
     constexpr std::size_t row_count() const override { return M; }
     constexpr std::size_t col_count() const override { return N; }
@@ -314,17 +318,19 @@ public:
     // this ctor initialises dynamic Matrix from a Fixed Matrix
     template <std::size_t P, std::size_t Q>
     explicit Matrix(const Matrix<T, P, Q>& other) : Matrix(P, Q, other.contents()) {}
+    // vritual destructor required due to C++ language rules
+    virtual ~Matrix() = default;
     // read-only accessor for matrix contents
-    std::span<const T> contents() const {
+    std::span<const T> contents() const override {
         return std::span<const T>(_contents);
     }
     // read-write accessor for matrix contents
-    std::span<T> contents() {
+    std::span<T> contents() override {
         return std::span<T>(_contents);
     }
     // getters for dimensions
-    std::size_t row_count() const { return _m; }
-    std::size_t col_count() const { return _n; }
+    std::size_t row_count() const override { return _m; }
+    std::size_t col_count() const override { return _n; }
     // equality operator
     bool operator==(const Matrix& other) const {
         // validate dimensions before doing the actual comparison
@@ -335,7 +341,7 @@ public:
         return this->_contents == other._contents;
     }
     // read-only accessor for a specific cell of the Matrix
-    const T& operator()(std::size_t m, std::size_t n) const {
+    const T& operator()(std::size_t m, std::size_t n) const override {
         // validate indices
         if (m >= _m or n >= _n) {
             throw std::runtime_error("Matrix[] indices out of bounds");
@@ -343,7 +349,7 @@ public:
         return _contents[m * _n + n];
     }
     // read-write accessor for a specific cell of the Matrix
-    T& operator()(std::size_t m, std::size_t n) {
+    T& operator()(std::size_t m, std::size_t n) override {
         // validate indices
         if (m >= _m or n >= _n) {
             throw std::runtime_error("Matrix[] indices out of bounds");
