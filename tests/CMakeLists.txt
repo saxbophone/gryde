@@ -13,6 +13,7 @@ target_sources(
         addition.cpp
         cell_accessor.cpp
         comparison.cpp
+        constexpr.cpp
         constructors.cpp
         contents_accessor.cpp
         determinant.cpp
