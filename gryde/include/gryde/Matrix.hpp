@@ -8,76 +8,73 @@
 
 #include <cstddef>
 
-// anonymous namespace for private implementation details
-namespace {
-    // abstract base class defining the interface of a class implementing
-    // Matrix functionality
-    template <typename T>
-    class MatrixBase {
-    public:
-        // vritual destructor required due to C++ language rules
-        virtual constexpr ~MatrixBase() = default;
-        // getters for dimensions
-        virtual constexpr std::size_t row_count() const = 0;
-        virtual constexpr std::size_t col_count() const = 0;
-        // read-only accessor for matrix contents
-        virtual constexpr std::span<const T> contents() const = 0;
-        // read-write accessor for matrix contents
-        virtual constexpr std::span<T> contents() = 0;
-        // read-only accessor for a specific cell of the Matrix
-        virtual constexpr const T& operator()(std::size_t, std::size_t) const = 0;
-        // read-write accessor for a specific cell of the Matrix
-        virtual constexpr T& operator()(std::size_t, std::size_t) = 0;
-    protected:
-        // helper to unpack initializer_lists in ctors
-        // XXX: because this method is called from a ctor, we have to avoid
-        // using any virtual methods in it, hence the need to pass col_count
-        // and contents explicitly
-        static constexpr void _unpack_initializer_list(
-            std::initializer_list<std::initializer_list<T>> l,
-            std::size_t col_count,
-            std::span<T> contents
-        ) {
-            // set contents of each row one by one (we allow shortened rows)
-            std::size_t row_n = 0;
-            for (auto row : l) {
-                // just check row doesn't exceed max size
-                if (row.size() > col_count) {
-                    throw std::runtime_error("Oversized row found in initializer_list");
-                }
-                std::size_t col_n = 0;
-                for (auto col : row) {
-                    contents[row_n * col_count + col_n] = col;
-                    col_n++;
-                }
-                row_n++;
+// abstract base class defining the interface of a class implementing
+// Matrix functionality
+template <typename T>
+class MatrixBase {
+public:
+    // vritual destructor required due to C++ language rules
+    virtual constexpr ~MatrixBase() = default;
+    // getters for dimensions
+    virtual constexpr std::size_t row_count() const = 0;
+    virtual constexpr std::size_t col_count() const = 0;
+    // read-only accessor for matrix contents
+    virtual constexpr std::span<const T> contents() const = 0;
+    // read-write accessor for matrix contents
+    virtual constexpr std::span<T> contents() = 0;
+    // read-only accessor for a specific cell of the Matrix
+    virtual constexpr const T& operator()(std::size_t, std::size_t) const = 0;
+    // read-write accessor for a specific cell of the Matrix
+    virtual constexpr T& operator()(std::size_t, std::size_t) = 0;
+protected:
+    // helper to unpack initializer_lists in ctors
+    // XXX: because this method is called from a ctor, we have to avoid
+    // using any virtual methods in it, hence the need to pass col_count
+    // and contents explicitly
+    static constexpr void _unpack_initializer_list(
+        std::initializer_list<std::initializer_list<T>> l,
+        std::size_t col_count,
+        std::span<T> contents
+    ) {
+        // set contents of each row one by one (we allow shortened rows)
+        std::size_t row_n = 0;
+        for (auto row : l) {
+            // just check row doesn't exceed max size
+            if (row.size() > col_count) {
+                throw std::runtime_error("Oversized row found in initializer_list");
             }
+            std::size_t col_n = 0;
+            for (auto col : row) {
+                contents[row_n * col_count + col_n] = col;
+                col_n++;
+            }
+            row_n++;
         }
-        // helper for making submatrices
-        constexpr void _populate_submatrix(
-            MatrixBase& submatrix,
-            std::size_t row,
-            std::size_t col
-        ) const {
-            // cursor indices for output to new matrix
-            std::size_t p = 0;
-            std::size_t q = 0;
-            for (std::size_t m = 0; m < this->row_count(); m++) {
-                for (std::size_t n = 0; n < this->col_count(); n++) {
-                    // skip cells from removed row/column
-                    if (m == row or n == col) { continue; }
-                    submatrix(p, q) = this->operator()(m, n);
-                    // advance the cursors
-                    q++;
-                    if (q == submatrix.col_count()) {
-                        q = 0;
-                        p++;
-                    }
+    }
+    // helper for making submatrices
+    constexpr void _populate_submatrix(
+        MatrixBase& submatrix,
+        std::size_t row,
+        std::size_t col
+    ) const {
+        // cursor indices for output to new matrix
+        std::size_t p = 0;
+        std::size_t q = 0;
+        for (std::size_t m = 0; m < this->row_count(); m++) {
+            for (std::size_t n = 0; n < this->col_count(); n++) {
+                // skip cells from removed row/column
+                if (m == row or n == col) { continue; }
+                submatrix(p, q) = this->operator()(m, n);
+                // advance the cursors
+                q++;
+                if (q == submatrix.col_count()) {
+                    q = 0;
+                    p++;
                 }
             }
         }
-    };
-}
+    }
+};
 
 template <
     typename T,
