@@ -14,6 +14,7 @@ target_sources(
         comparison.cpp
         constructors.cpp
         contents_accessor.cpp
+        determinant.cpp
         submatrix.cpp
 )
 target_link_libraries(
