@@ -1,5 +1,8 @@
 #include <iostream>
 
+#include <gryde/Matrix.hpp>
+
+
 int main() {
     constexpr Matrix<int, 3, 3> a = {
         {1, 9, 6,},
@@ -11,4 +14,7 @@ int main() {
         std::cout << item << ", ";
     }
     std::cout << std::endl;
+    constexpr int determinant = a.determinant();
+    constexpr int b_determinant = b.determinant();
+    std::cout << determinant << " " << b_determinant << std::endl;
 }

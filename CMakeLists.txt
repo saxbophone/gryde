@@ -137,6 +137,9 @@ include(CPM)
 
 # library
 add_subdirectory(gryde)
+# test program
+add_executable(main main.cpp)
+target_link_libraries(main PRIVATE gryde)
 # unit tests --only enable if requested AND we're not building as a sub-project
 if(ENABLE_TESTS AND NOT GRYDE_SUBPROJECT)
     message(STATUS "[gryde] Unit Tests Enabled")
