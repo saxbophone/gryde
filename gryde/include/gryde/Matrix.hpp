@@ -183,8 +183,24 @@ public:
         } else if constexpr (M == 1) {
             return this->_contents[0];
         } else {
-            // TODO: calculate determinant properly
-            return {};
+            // recursively calculate determinant
+            // get the first row of values
+            std::span<const T, N> top_row = this->contents().template subspan<0, N>();
+            // make an array of each corresponding submatrix
+            std::array<Matrix<T, M - 1, N - 1>, N> submatrices;
+            for (std::size_t col = 0; col < N; col++) {
+                submatrices[col] = this->submatrix(0, col);
+            }
+            // sum by adding each entry and subtracting each other entry
+            T sum = {};
+            for (std::size_t col = 0; col < N; col++) {
+                if (col % 2 == 0) { // add when even
+                    sum += top_row[col] * submatrices[col].determinant();
+                } else { // subtract when odd
+                    sum -= top_row[col] * submatrices[col].determinant();
+                }
+            }
+            return sum;
         }
     }
     // fixed-Matrix + fixed-Matrix
@@ -346,8 +362,24 @@ public:
         } else if (_m == 1) {
             return this->_contents[0];
         } else {
-            // TODO: calculate determinant properly
-            return {};
+            // recursively calculate determinant
+            // get the first row of values
+            std::span<const T> top_row = this->contents().subspan(0, _n);
+            // make a vector of each corresponding submatrix
+            std::vector<Matrix<T>> submatrices(_n);
+            for (std::size_t col = 0; col < _n; col++) {
+                submatrices[col] = this->submatrix(0, col);
+            }
+            // sum by adding each entry and subtracting each other entry
+            T sum = {};
+            for (std::size_t col = 0; col < _n; col++) {
+                if (col % 2 == 0) { // add when even
+                    sum += top_row[col] * submatrices[col].determinant();
+                } else { // subtract when odd
+                    sum -= top_row[col] * submatrices[col].determinant();
+                }
+            }
+            return sum;
         }
     }
     // dynamic-Matrix + dynamic-Matrix
