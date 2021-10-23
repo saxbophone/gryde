@@ -177,8 +177,15 @@ public:
     constexpr T determinant() const {
         // check that the Matrix is square at compile-time
         static_assert(M == N, "Determinant is undefined for non-square Matrix");
-        // TODO: calculate determinant properly
-        return {};
+        // rule out special cases
+        if constexpr (M == 0) {
+            return T{1};
+        } else if constexpr (M == 1) {
+            return this->_contents[0];
+        } else {
+            // TODO: calculate determinant properly
+            return {};
+        }
     }
     // fixed-Matrix + fixed-Matrix
     constexpr Matrix operator+(const Matrix& other) const {
@@ -333,8 +340,15 @@ public:
         if (_m != _n) {
             throw std::runtime_error("Determinant is undefined for non-square Matrix");
         }
-        // TODO: calculate determinant properly
-        return {};
+        // rule out special cases
+        if (_m == 0) {
+            return T{1};
+        } else if (_m == 1) {
+            return this->_contents[0];
+        } else {
+            // TODO: calculate determinant properly
+            return {};
+        }
     }
     // dynamic-Matrix + dynamic-Matrix
     Matrix operator+(const Matrix& other) const {
