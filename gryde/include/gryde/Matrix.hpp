@@ -243,8 +243,14 @@ public:
     }
     // fixed-Matrix transposition
     constexpr Matrix<T, N, M> transpose() const {
-        // TODO: implement transposition
-        return {};
+        Matrix<T, N, M> transposed;
+        // write the rows of this as the columns of transposed
+        for (std::size_t m = 0; m < M; m++) {
+            for (std::size_t n = 0; n < N; n++) {
+                transposed(n, m) = (*this)(m, n);
+            }
+        }
+        return transposed;
     }
     // returns a new fixed-Matrix with the specified row and column removed
     constexpr Matrix<T, M - 1, N - 1> submatrix(std::size_t row, std::size_t col) const {
