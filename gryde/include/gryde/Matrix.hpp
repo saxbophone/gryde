@@ -223,8 +223,17 @@ public:
     // fixed-Matrix * fixed-Matrix
     template <std::size_t P>
     constexpr Matrix<T, M, P> operator*(const Matrix<T, N, P>& other) const {
-        // TODO: implement Matrix multiplication
-        return {};
+        // Matrix multiplication
+        Matrix<T, M, P> output;
+        for (std::size_t m = 0; m < M; m++) {
+            for (std::size_t p = 0; p < P; p++) {
+                // every new cell (m, p) in output matrix:
+                for (std::size_t n = 0; n < N; n++) {
+                    output(m, p) += ((*this)(m, n) * other(n, p));
+                }
+            }
+        }
+        return output;
     }
     // fixed-Matrix * dynamic-Matrix
     Matrix<T> operator*(const Matrix<T>& other) const {
