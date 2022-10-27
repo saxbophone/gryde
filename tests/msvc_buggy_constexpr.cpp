@@ -11,12 +11,13 @@ class ContainerBase {
 };
 
 template <typename T, std::size_t N>
-class Container : public ContainerBase<T, N> {
+// class Container : public ContainerBase<T, N> {
+class Container {
 public:
     constexpr Container(std::initializer_list<T> data) {
         std::copy(data.begin(), data.end(), _items.begin());
     }
-    constexpr const T& operator()(std::size_t i) const override {
+    constexpr const T& operator()(std::size_t i) const {
         return _items[i];
     }
 private:
