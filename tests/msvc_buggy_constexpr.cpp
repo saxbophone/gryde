@@ -7,6 +7,7 @@
 
 template <typename T, std::size_t N>
 class ContainerBase {
+public:
     virtual constexpr const T& operator()(std::size_t i) const = 0;
 };
 
