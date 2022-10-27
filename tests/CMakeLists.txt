@@ -18,6 +18,7 @@ target_sources(
         contents_accessor.cpp
         determinant.cpp
         submatrix.cpp
+        msvc_buggy_constexpr.cpp
 )
 target_link_libraries(
     tests
