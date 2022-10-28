@@ -69,7 +69,6 @@ TEST_CASE("constexpr cell access") {
     constexpr int cell = matrix(1, 1);
     CHECK(cell == 3);
 }
-#endif
 
 TEST_CASE("constexpr determinant") {
     constexpr Matrix<int, 3, 3> matrix = {
@@ -80,3 +79,4 @@ TEST_CASE("constexpr determinant") {
     constexpr int determinant = matrix.determinant();
     CHECK(determinant == -93);
 }
+#endif
