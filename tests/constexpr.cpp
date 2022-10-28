@@ -2,7 +2,6 @@
 
 #include <gryde/Matrix.hpp>
 
-
 TEST_CASE("constexpr default initialisation") {
     constexpr Matrix<int, 3, 2> matrix;
     SUCCEED();
@@ -54,6 +53,12 @@ TEST_CASE("constexpr get contents") {
     STATIC_REQUIRE(matrix.contents().size() == 8);
 }
 
+// MSVC has a bug where a virtual constexpr function-call operator (user here to
+// access Matrix cell contents) is erroneously claimed to not be a constant
+// expression.
+// Bug report:
+// https://developercommunity.visualstudio.com/t/MSVC-erroneously-claims-the-return-value/10184063
+#ifndef _MSC_VER
 TEST_CASE("constexpr cell access") {
     constexpr Matrix<int, 4, 2> matrix = {
         {9, 1,},
@@ -64,6 +69,7 @@ TEST_CASE("constexpr cell access") {
     constexpr int cell = matrix(1, 1);
     CHECK(cell == 3);
 }
+#endif
 
 TEST_CASE("constexpr determinant") {
     constexpr Matrix<int, 3, 3> matrix = {
