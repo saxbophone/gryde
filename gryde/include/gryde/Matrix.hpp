@@ -1,5 +1,5 @@
-#ifndef COM_SAXBOPHONE_GALLEY_GF_HPP
-#define COM_SAXBOPHONE_GALLEY_GF_HPP
+#ifndef COM_SAXBOPHONE_GRYDE_MATRIX_HPP
+#define COM_SAXBOPHONE_GRYDE_MATRIX_HPP
 
 #include <array>
 #include <initializer_list>
