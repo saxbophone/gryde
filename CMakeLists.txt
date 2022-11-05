@@ -9,7 +9,7 @@ else()
     set(GRYDE_SUBPROJECT ON)
 endif()
 
-project(gryde VERSION 0.5.0 LANGUAGES CXX)
+project(gryde VERSION 0.6.0 LANGUAGES CXX)
 
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
