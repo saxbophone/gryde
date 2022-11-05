@@ -1,3 +1,6 @@
+#ifndef COM_SAXBOPHONE_GALLEY_GF_HPP
+#define COM_SAXBOPHONE_GALLEY_GF_HPP
+
 #include <array>
 #include <initializer_list>
 #include <limits>
@@ -8,6 +11,7 @@
 
 #include <cstddef>
 
+namespace com::saxbophone::gryde {
 // abstract base class defining the interface of a class implementing
 // Matrix functionality
 template <typename T>
@@ -421,60 +425,62 @@ public:
     // dynamic-Matrix * dynamic-Matrix
     Matrix operator*(const Matrix& other) const {
         // TODO: validate compatible dimensions at run-time? (or just relegate check to casting constructor?)
-        // TODO: implement Matrix multiplication
-        return {};
-    }
-    // dynamic-Matrix * fixed-Matrix
-    template <std::size_t P, std::size_t Q>
-    Matrix operator*(const Matrix<T, P, Q>& other) const {
-        // TODO: validate compatible dimensions at run-time? (or just relegate check to casting constructor?)
-        // TODO: implement Matrix multiplication
-        return {};
-    }
-    // dynamic-Matrix transposition
-    Matrix transpose() const {
-        // TODO: implement transposition
-        return {};
-    }
-    // returns a new dynamic-Matrix with the specified row and column removed
-    Matrix submatrix(std::size_t row, std::size_t col) const {
-        // prevent wrap-around on underflow making huge matrices
-        if (_m < 1 or _n < 1) {
-            throw std::runtime_error("No more rows or columns to remove");
+            // TODO: implement Matrix multiplication
+            return {};
         }
-        // validate row and column indices
-        if (row >= _m or col >= _n) {
-            throw std::runtime_error("Row or column index out of bounds");
+        // dynamic-Matrix * fixed-Matrix
+        template <std::size_t P, std::size_t Q>
+        Matrix operator*(const Matrix<T, P, Q>& other) const {
+            // TODO: validate compatible dimensions at run-time? (or just relegate check to casting constructor?)
+            // TODO: implement Matrix multiplication
+            return {};
         }
+        // dynamic-Matrix transposition
+        Matrix transpose() const {
+            // TODO: implement transposition
+            return {};
+        }
+        // returns a new dynamic-Matrix with the specified row and column removed
+        Matrix submatrix(std::size_t row, std::size_t col) const {
+            // prevent wrap-around on underflow making huge matrices
+            if (_m < 1 or _n < 1) {
+                throw std::runtime_error("No more rows or columns to remove");
+            }
+            // validate row and column indices
+            if (row >= _m or col >= _n) {
+                throw std::runtime_error("Row or column index out of bounds");
+            }
 
-        // make a smaller matrix
-        Matrix sub(_m - 1, _n - 1);
-        // populate it from all cells except those from the removed row and column
-        this->_populate_submatrix(sub, row, col);
-        return sub;
-    }
-    // returns a new dynamic-Matrix with the specified row removed
-    Matrix remove_row(std::size_t row) const {
-        // prevent wrap-around on underflow making huge matrices
-        if (_m < 1) {
-            throw std::runtime_error("No more rows to remove");
+            // make a smaller matrix
+            Matrix sub(_m - 1, _n - 1);
+            // populate it from all cells except those from the removed row and column
+            this->_populate_submatrix(sub, row, col);
+            return sub;
         }
-        // TODO: implement
-        return Matrix(_m - 1, _n); // reduce size
-    }
-    // returns a new dynamic-Matrix with the specified column removed
-    Matrix remove_col(std::size_t col) const {
-        // prevent wrap-around on underflow making huge matrices
-        if (_n < 1) {
-            throw std::runtime_error("No more columns to remove");
+        // returns a new dynamic-Matrix with the specified row removed
+        Matrix remove_row(std::size_t row) const {
+            // prevent wrap-around on underflow making huge matrices
+            if (_m < 1) {
+                throw std::runtime_error("No more rows to remove");
+            }
+            // TODO: implement
+            return Matrix(_m - 1, _n); // reduce size
         }
-        // TODO: implement
-        return Matrix(_m, _n - 1); // reduce size
-    }
-private:
-    // dimensions
-    std::size_t _m;
-    std::size_t _n;
-    // contents
-    std::vector<T> _contents;
-};
+        // returns a new dynamic-Matrix with the specified column removed
+        Matrix remove_col(std::size_t col) const {
+            // prevent wrap-around on underflow making huge matrices
+            if (_n < 1) {
+                throw std::runtime_error("No more columns to remove");
+            }
+            // TODO: implement
+            return Matrix(_m, _n - 1); // reduce size
+        }
+    private:
+        // dimensions
+        std::size_t _m;
+        std::size_t _n;
+        // contents
+        std::vector<T> _contents;
+    };
+} // namespace com::saxbophone::gryde
+#endif // include guard
