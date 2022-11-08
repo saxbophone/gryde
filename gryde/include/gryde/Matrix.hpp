@@ -78,6 +78,15 @@ protected:
             }
         }
     }
+    // helper for element-wise addition between matrices
+    static constexpr void _element_wise_addition(const MatrixBase& lhs, const MatrixBase& rhs, MatrixBase& result) {
+        for (std::size_t m = 0; m < result.row_count(); m++) {
+            for (std::size_t n = 0; n < result.col_count(); n++) {
+                result(m, n) = lhs(m, n) + rhs(m, n);
+            }
+        }
+        return;
+    }
 };
 
 template <
@@ -210,14 +219,16 @@ public:
     }
     // fixed-Matrix + fixed-Matrix
     constexpr Matrix operator+(const Matrix& other) const {
-        // TODO: implement element-wise addition
-        return {};
+        Matrix result;
+        MatrixBase<T>::_element_wise_addition(*this, other, result);
+        return result;
     }
     // fixed-Matrix + dynamic-Matrix
     Matrix operator+(const Matrix<T>& other) const {
-        // TODO: validate same dimensions at run-time? (or just relegate check to casting constructor?)
-        // TODO: implement element-wise addition
-        return {};
+        Matrix result;
+        // TODO: validate same dimensions at run-time!
+        MatrixBase<T>::_element_wise_addition(*this, other, result);
+        return result;
     }
     // fixed-Matrix * scalar
     constexpr Matrix operator*(const T& scalar) const {
