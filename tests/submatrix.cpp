@@ -3,6 +3,8 @@
 #include <gryde/Matrix.hpp>
 
 
+using namespace com::saxbophone::gryde;
+
 SCENARIO("Make submatrix of zero-size dynamic-size Matrix") {
     GIVEN("A dynamic-size Matrix of zero-size") {
         Matrix<int> matrix(0, 0);

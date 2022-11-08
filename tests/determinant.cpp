@@ -3,6 +3,8 @@
 #include <gryde/Matrix.hpp>
 
 
+using namespace com::saxbophone::gryde;
+
 SCENARIO("Calculating determinant of fixed-size Matrix") {
     GIVEN("An empty fixed-size Matrix") {
         Matrix<int, 0, 0> empty;

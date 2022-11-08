@@ -2,6 +2,9 @@
 
 #include <gryde/Matrix.hpp>
 
+
+using namespace com::saxbophone::gryde;
+
 TEST_CASE("constexpr default initialisation") {
     constexpr Matrix<int, 3, 2> matrix;
     SUCCEED();

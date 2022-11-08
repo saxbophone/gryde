@@ -3,6 +3,8 @@
 #include <gryde/Matrix.hpp>
 
 
+using namespace com::saxbophone::gryde;
+
 SCENARIO("Comparing zero-size Matrices for equality") {
     GIVEN("A fixed-size Matrix of zero-size") {
         Matrix<int, 0, 0> a;

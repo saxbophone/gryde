@@ -3,6 +3,8 @@
 #include <gryde/Matrix.hpp>
 
 
+using namespace com::saxbophone::gryde;
+
 SCENARIO("Get cell of zero-size fixed Matrix") {
     GIVEN("A fixed Matrix of zero-size") {
         Matrix<int, 0, 0> matrix;

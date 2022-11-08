@@ -3,6 +3,8 @@
 #include <gryde/Matrix.hpp>
 
 
+using namespace com::saxbophone::gryde;
+
 SCENARIO("Adding fixed-size Matrix to fixed-size Matrix") {
     GIVEN("A zero-sized fixed-size Matrx") {
         Matrix<int, 0, 0> a;

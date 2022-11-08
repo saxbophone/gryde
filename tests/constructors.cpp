@@ -3,6 +3,8 @@
 #include <gryde/Matrix.hpp>
 
 
+using namespace com::saxbophone::gryde;
+
 SCENARIO("Default-construction of Fixed-size Matrix") {
     WHEN("A Matrix of compile-time size is default-constructed") {
         constexpr Matrix<int, 3, 4> matrix;
