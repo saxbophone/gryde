@@ -7,6 +7,7 @@
 #include <span>
 #include <stdexcept>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include <cstddef>
@@ -30,9 +31,13 @@ public:
     virtual constexpr const T& operator()(std::size_t, std::size_t) const = 0;
     // read-write accessor for a specific cell of the Matrix
     virtual constexpr T& operator()(std::size_t, std::size_t) = 0;
+    // get matrix dimensions as pair of <rows, columns>
+    constexpr std::pair<std::size_t, std::size_t> dimensions() const {
+        return {row_count(), col_count()};
+    }
     // generic helper method for determining matching matrix dimensions
     constexpr static bool dimensions_match(const MatrixBase& lhs, const MatrixBase& rhs) {
-        return lhs.row_count() == rhs.row_count() and lhs.col_count() == rhs.col_count();
+        return lhs.dimensions() == rhs.dimensions();
     }
 protected:
     // helper to unpack initializer_lists in ctors
@@ -368,7 +373,7 @@ public:
     // equality operator
     bool operator==(const Matrix& other) const {
         // validate dimensions before doing the actual comparison
-        if (this->_m != other._m or this->_n != other._n) {
+        if (not MatrixBase<T>::dimensions_match(*this, other)) {
             throw std::runtime_error("Matrix dimensions don't match");
         }
         // otherwise, just compare contents
