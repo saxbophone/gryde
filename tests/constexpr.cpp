@@ -56,7 +56,7 @@ TEST_CASE("constexpr get contents") {
     STATIC_REQUIRE(matrix.contents().size() == 8);
 }
 
-// MSVC has a bug where a virtual constexpr function-call operator (user here to
+// MSVC has a bug where a virtual constexpr function-call operator (used here to
 // access Matrix cell contents) is erroneously claimed to not be a constant
 // expression.
 // Bug report:
