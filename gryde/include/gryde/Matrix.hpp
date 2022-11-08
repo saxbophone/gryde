@@ -30,6 +30,10 @@ public:
     virtual constexpr const T& operator()(std::size_t, std::size_t) const = 0;
     // read-write accessor for a specific cell of the Matrix
     virtual constexpr T& operator()(std::size_t, std::size_t) = 0;
+    // generic helper method for determining matching matrix dimensions
+    constexpr static bool dimensions_match(const MatrixBase& lhs, const MatrixBase& rhs) {
+        return lhs.row_count() == rhs.row_count() and lhs.col_count() == rhs.col_count();
+    }
 protected:
     // helper to unpack initializer_lists in ctors
     // XXX: because this method is called from a ctor, we have to avoid
@@ -124,7 +128,7 @@ public:
       : Matrix()
       {
         // check dimensions of other match our dimensions
-        if (other.row_count() != M or other.col_count() != N) {
+        if (not MatrixBase<T>::dimensions_match(*this, other)) {
             throw std::runtime_error("Matrix dimensions don't match");
         }
         // use compile-time-sized subspan to convert dynamic span to fixed span
@@ -225,8 +229,11 @@ public:
     }
     // fixed-Matrix + dynamic-Matrix
     Matrix operator+(const Matrix<T>& other) const {
+        // validate dimensions
+        if (not MatrixBase<T>::dimensions_match(*this, other)) {
+            throw std::runtime_error("Matrix dimensions don't match");
+        }
         Matrix result;
-        // TODO: validate same dimensions at run-time!
         MatrixBase<T>::_element_wise_addition(*this, other, result);
         return result;
     }
@@ -417,16 +424,24 @@ public:
     }
     // dynamic-Matrix + dynamic-Matrix
     Matrix operator+(const Matrix& other) const {
-        // TODO: validate same dimensions at run-time
-        // TODO: implement element-wise addition
-        return {};
+        // validate dimensions
+        if (not MatrixBase<T>::dimensions_match(*this, other)) {
+            throw std::runtime_error("Matrix dimensions don't match");
+        }
+        Matrix result(_m, _n);
+        MatrixBase<T>::_element_wise_addition(*this, other, result);
+        return result;
     }
     // dynamic-Matrix + fixed-Matrix
     template <std::size_t P, std::size_t Q>
     Matrix<T, P, Q> operator+(const Matrix<T, P, Q>& other) const {
-        // TODO: validate same dimensions at run-time? (or just relegate check to casting constructor?)
-        // TODO: implement element-wise addition
-        return {};
+        // validate dimensions
+        if (not MatrixBase<T>::dimensions_match(*this, other)) {
+            throw std::runtime_error("Matrix dimensions don't match");
+        }
+        Matrix<T, P, Q> result;
+        MatrixBase<T>::_element_wise_addition(*this, other, result);
+        return result;
     }
     // dynamic-Matrix * scalar
     Matrix operator*(const T& scalar) const {
